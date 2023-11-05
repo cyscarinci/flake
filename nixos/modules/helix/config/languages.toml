@@ -1,0 +1,33 @@
+[[language]]
+name = "nix"
+formatter = { command = "nixfmt" }
+
+[[language]]
+name = "latex"
+indent = { tab-width = 4, unit = "    " }
+language-servers = [ "texlab", "ltex" ]
+
+[language.soft-wrap]
+enable = true
+wrap-at-text-width = true
+
+[language-server.texlab.config.texlab]
+build.forwardSearchAfter = true
+build.onSave = true
+build.executable = "tectonic"
+build.args = [
+  "-X",
+  "compile",
+  "%f", 
+  "--synctex",
+  "--keep-logs",
+  "--keep-intermediates"
+]
+chktex.onEdit = true
+forwardSearch.executable = "zathura"
+forwardSearch.args = [ "--synctex-forward", "%l:%c:%f", "%p" ]
+
+[language-server.ltex]
+command = "ltex-ls"
+config.ltex.language = "en-US"
+
