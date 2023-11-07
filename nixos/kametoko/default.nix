@@ -31,7 +31,8 @@
     zathura
     
   ];
-
+  
+  nixpkgs.config.allowUnfree = true;
   system.stateVersion = "23.05";
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   

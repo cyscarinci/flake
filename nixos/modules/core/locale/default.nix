@@ -26,6 +26,11 @@ with lib;
         LC_TIME = "${vars.extraLocale}"+".UTF-8";
       };
     };
+    # Configure keymap in X11
+    services.xserver = {
+      layout = "kr";
+      xkbVariant = "";
+    };
   })
   (mkIf ( config.modules.hangul_input ) {
     i18n.inputMethod = { enabled = "ibus"; ibus.engines = with pkgs.ibus-engines; [ hangul ]; }; 
