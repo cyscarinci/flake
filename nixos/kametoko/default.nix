@@ -9,7 +9,7 @@
     hangul_input = true;
     laptop_mode = true;
 
-    hyprland = false;
+    sway = false;
     gnome = true;
     xdg = true;
 
@@ -23,6 +23,13 @@
     firefox-wayland
     thunderbird
     libreoffice-fresh
+
+    texlive.combined.scheme-full
+    texlab
+    ltex-ls
+    tectonic
+    zathura
+    
   ];
 
   system.stateVersion = "23.05";

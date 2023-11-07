@@ -7,7 +7,7 @@ with lib;
       default = false;
     };
   };
-  config = mkIf ( config.modules.kitty ) {
+  config = mkIf ( config.modules.helix ) {
     environment.systemPackages = with pkgs; [
       inputs.helix.packages.${pkgs.system}.default
     ];

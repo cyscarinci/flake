@@ -15,7 +15,7 @@
   ./fonts
   ./gnome
   ./helix
-  ./hyprland
+  ./sway
   ./kitty
 #  ./latex
 #  ./mako
