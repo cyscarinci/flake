@@ -34,38 +34,52 @@ in
     };
   };
   config = mkIf ( config.modules.sway ) {
+    environment.systemPackages = with pkgs; [
+      alacritty # gpu accelerated terminal
+      dbus-sway-environment
+      configure-gtk
+      wayland
+      xdg-utils # for opening default programs when clicking links
+      glib # gsettings
+      dracula-theme # gtk theme
+      gnome3.adwaita-icon-theme  # default gnome cursors
+      swaylock
+      swayidle
+      grim # screenshot functionality
+      slurp # screenshot functionality
+      wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
+      bemenu # wayland clone of dmenu
+      mako # notification system developed by swaywm maintainer
+      wdisplays # tool to configure displays
+    ];
 
-    hardware.opengl = {
+    # xdg-desktop-portal works by exposing a series of D-Bus interfaces
+    # known as portals under a well-known name
+    # (org.freedesktop.portal.Desktop) and object path
+    # (/org/freedesktop/portal/desktop).
+    # The portal interfaces include APIs for file access, opening URIs,
+    # printing and others.
+    services.dbus.enable = true;
+    xdg.portal = {
       enable = true;
+      wlr.enable = true;
+      # gtk portal needed to make gtk apps happy
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     };
+
+    # enable sway window manager
+    programs.sway = {
+      enable = true;
+      wrapperFeatures.gtk = true;
+    };
+    
+    security.pam.services.swaylock = {}
+    security.pam.loginLimits = [ { domain = "@users"; item = "rtprio"; type = "-"; value = 1; } ];
 
     users.users.${vars.user}.extraGroups = [ "video" ];
     programs.light.enable = true;
 
-    services.greetd = {
-      enable = true;
-      settings = {
-        default_session.command = ''
-          ${pkgs.greetd.tuigreet}/bin/tuigreet \
-          --time \
-          --asterisks \
-          --user-menu \
-          --cmd sway
-        '';
-      };
-    };
-
-    environment.etc."greetd/environments".text = ''
-      sway
-    '';
-
-    
-    security.polkit.enable = true;
-    security.pam.services.swaylock = {};
-    security.pam.loginLimits = [
-      { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
-    ];
-    
+    # kanshi systemd service
     systemd.user.services.kanshi = {
       description = "kanshi daemon";
       serviceConfig = {
@@ -73,18 +87,10 @@ in
         ExecStart = ''${pkgs.kanshi}/bin/kanshi -c kanshi_config_file'';
       };
     };
-    
-    home-manager.users.${vars.user} = {
-      wayland.windowManager.sway = {
-        enable = true;
-        config = rec {
-          modifier = "Mod4";
-          terminal = "kitty"; 
-          startup = [ {command = "firefox";} ];
-        };
-        xwayland = true;
-      };
 
+
+    home-manager.users.${vars.user} = {
+      home.file.".config/sway".source = ./config;
       home.pointerCursor = {
         name = "Adwaita";
         package = pkgs.gnome.adwaita-icon-theme;
@@ -95,7 +101,6 @@ in
         };
       };
     };
-  
   };
 }
 
